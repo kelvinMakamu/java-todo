@@ -16,7 +16,7 @@ public class TaskDaoTest {
 
     @Before
     public void setUp() throws Exception {
-        String dbUrl = "jdbc:h2:mem:testing; INIT=RUNSCRIPT from 'classpath=db/create.sql'";
+        String dbUrl = "jdbc:h2:mem:testing;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
         Sql2o sql2o  = new Sql2o(dbUrl,"","");
         taskDao      = new TaskService(sql2o);
         connection   = sql2o.open();
