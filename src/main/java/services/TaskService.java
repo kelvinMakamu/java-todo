@@ -47,6 +47,41 @@ public class TaskService implements TaskDao {
                    .addParameter("id",id)
                    .executeAndFetchFirst(Task.class);
        }
+    }
 
+    @Override
+    public void update(int id, String content) {
+        String query = "UPDATE tasks SET description=:description WHERE id:id";
+        try(Connection connection = sql2o.open()){
+            connection.createQuery(query)
+                    .addParameter("description",content)
+                    .addParameter("id",id)
+                    .executeUpdate();
+        }catch(Sql2oException ex){
+            System.out.println("Database Error Experienced "+ ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public void deleteById(int id) {
+        String query = "DELETE * FROM tasks WHERE id:id";
+        try(Connection connection = sql2o.open()){
+            connection.createQuery(query)
+                    .addParameter("id",id)
+                    .executeUpdate();
+        }catch(Sql2oException ex){
+            System.out.println("Database Error Experienced "+ ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public void clearAllTasks() {
+        String query = "DELETE * FROM tasks";
+        try(Connection connection = sql2o.open()){
+            connection.createQuery(query)
+                    .executeUpdate();
+        }catch(Sql2oException ex){
+            System.out.println("Database Error Experienced "+ ex.getLocalizedMessage());
+        }
     }
 }
