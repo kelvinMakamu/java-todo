@@ -1,7 +1,9 @@
 package dao;
 
+import models.Task;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import services.TaskService;
@@ -24,4 +26,22 @@ public class TaskDaoTest {
     public void tearDown() throws Exception {
         connection.close();
     }
+
+    @Test
+    public void addingTasksId() throws Exception {
+        Task task = new Task("mow the lawn");
+        int originalTaskId = task.getId();
+        taskDao.add(task);
+        assertNotEquals(originalTaskId, task.getId());
+    }
+
+    @Test
+    public void existingTasksCanBeFoundById() throws Exception {
+        Task task = new Task ("mow the lawn");
+        taskDao.add(task); //add to dao (takes care of saving)
+        Task foundTask = taskDao.findById(task.getId()); //retrieve
+        assertEquals(task, foundTask); //should be the same
+    }
+
+
 }

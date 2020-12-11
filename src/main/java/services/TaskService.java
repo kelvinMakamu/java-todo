@@ -1,11 +1,52 @@
 package services;
 
 import dao.TaskDao;
+import models.Task;
+import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.Sql2oException;
+
+import java.util.List;
 
 public class TaskService implements TaskDao {
 
+    private final Sql2o sql2o;
+
     public TaskService(Sql2o sql2o) {
-        
+        this.sql2o = sql2o;
+    }
+
+    @Override
+    public void add(Task task) {
+        String query = "INSERT INTO tasks(description) VALUES(:description)";
+        try(Connection connection = sql2o.open()){
+            int id = (int)connection.createQuery(query,true)
+                    .bind(task)
+                    .executeUpdate()
+                    .getKey();
+            task.setId(id);
+        }catch (Sql2oException ex){
+            System.out.println("Database connection failed "+ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Task> getAll() {
+        String query = "SELECT * FROM tasks";
+        try(Connection connection = sql2o.open()){
+            return connection.createQuery(query)
+                    .executeAndFetch(Task.class);
+        }
+    }
+
+    @Override
+    public Task findById(int id) {
+       String query = "SELECT * FROM tasks WHERE id=:id";
+       try(Connection connection = sql2o.open()){
+           return connection.createQuery(query)
+                   .addParameter("id",id)
+                   .executeAndFetchFirst(Task.class);
+       }
+
     }
 }
