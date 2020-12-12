@@ -74,6 +74,16 @@ public class CategoryServiceTest {
         assertEquals(0,categoryService.getAll().size());
     }
 
+    @Test
+    public void clearAllCategories_DeleteAllAddedCategories(){
+        Category category = setUpNewCategory();
+        categoryService.add(category);
+        Category otherCategory = new Category("Miscellaneous");
+        categoryService.add(otherCategory);
+        categoryService.clearAllCategories();
+        assertEquals(0,categoryService.getAll().size());
+    }
+
     // HELPER
     private Category setUpNewCategory() {
         return new Category("Budget");
