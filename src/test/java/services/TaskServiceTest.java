@@ -54,6 +54,17 @@ public class TaskServiceTest {
     public void getAll_ReturnNoTaskOnEmptyList(){
         assertEquals(0,taskService.getAll().size());
     }
+
+    @Test
+    public void update_ChangesTaskContent(){
+        Task task = setUpNewTask();
+        String initialDescription = task.getDescription();
+        taskService.add(task);
+        taskService.update(task.getId(),1,"Brush The Cat");
+        Task updatedTask = taskService.findById(task.getId());
+        assertNotEquals(initialDescription, updatedTask.getDescription());
+    }
+
     //HELPERS
     public Task setUpNewTask(){
         return new Task("My First Task",1);

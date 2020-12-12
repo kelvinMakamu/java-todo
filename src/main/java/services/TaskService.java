@@ -52,7 +52,7 @@ public class TaskService implements TaskDao {
     @Override
     public void update(int id, int categoryId, String content) {
         String query = "UPDATE tasks SET (description,categoryId) =(:description, :categoryId)" +
-                " WHERE id:id";
+                " WHERE id=:id";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .addParameter("description",content)
