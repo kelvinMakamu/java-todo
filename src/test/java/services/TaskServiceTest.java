@@ -40,7 +40,8 @@ public class TaskServiceTest {
         Task task = setUpNewTask();
         taskService.add(task);
         Task foundTask = taskService.findById(task.getId());
-        assertEquals(task, foundTask);
+        assertEquals(task.getId(), foundTask.getId());
+        assertEquals(task.getDescription(), foundTask.getDescription());
     }
 
     @Test
@@ -72,7 +73,17 @@ public class TaskServiceTest {
         taskService.deleteById(task.getId());
         assertEquals(0,taskService.getAll().size());
     }
-    
+
+    @Test
+    public void clearAllTasks_DeletesAllAddedTasks(){
+        Task task = setUpNewTask();
+        taskService.add(task);
+        Task otherTask = new Task("Yellow Muffins",2);
+        taskService.add(otherTask);
+        taskService.clearAllTasks();
+        assertEquals(0,taskService.getAll().size());
+    }
+
     //HELPERS
     public Task setUpNewTask(){
         return new Task("My First Task",1);
