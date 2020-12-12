@@ -2,6 +2,7 @@ package services;
 
 import dao.CategoryDao;
 import models.Category;
+import models.Task;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -9,6 +10,7 @@ import org.sql2o.Sql2oException;
 import java.util.List;
 
 public class CategoryService implements CategoryDao {
+
     private final Sql2o sql2o;
 
     public CategoryService(Sql2o sql2o){
@@ -80,6 +82,16 @@ public class CategoryService implements CategoryDao {
                     .executeUpdate();
         }catch(Sql2oException ex){
             System.out.println("Database Error "+ex.getLocalizedMessage());
+        }
+    }
+
+    @Override
+    public List<Task> getAllTasksByCategory(int categoryId) {
+        String query = "SELECT * FROM tasks WHERE categoryId=:categoryId";
+        try(Connection connection = sql2o.open()){
+            return connection.createQuery(query)
+                    .addParameter("categoryId",categoryId)
+                    .executeAndFetch(Task.class);
         }
     }
 }

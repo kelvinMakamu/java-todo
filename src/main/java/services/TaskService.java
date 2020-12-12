@@ -18,7 +18,7 @@ public class TaskService implements TaskDao {
 
     @Override
     public void add(Task task) {
-        String query = "INSERT INTO tasks(description) VALUES(:description)";
+        String query = "INSERT INTO tasks(description,categoryId) VALUES(:description,:categoryId)";
         try(Connection connection = sql2o.open()){
             int id = (int)connection.createQuery(query,true)
                     .bind(task)
@@ -50,11 +50,13 @@ public class TaskService implements TaskDao {
     }
 
     @Override
-    public void update(int id, String content) {
-        String query = "UPDATE tasks SET description=:description WHERE id:id";
+    public void update(int id, int categoryId, String content) {
+        String query = "UPDATE tasks SET (description,categoryId) =(:description, :categoryId)" +
+                " WHERE id:id";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .addParameter("description",content)
+                    .addParameter("categoryId",categoryId)
                     .addParameter("id",id)
                     .executeUpdate();
         }catch(Sql2oException ex){
@@ -64,7 +66,7 @@ public class TaskService implements TaskDao {
 
     @Override
     public void deleteById(int id) {
-        String query = "DELETE * FROM tasks WHERE id:id";
+        String query = "DELETE FROM tasks WHERE id:id";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .addParameter("id",id)
@@ -76,7 +78,7 @@ public class TaskService implements TaskDao {
 
     @Override
     public void clearAllTasks() {
-        String query = "DELETE * FROM tasks";
+        String query = "DELETE FROM tasks";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .executeUpdate();

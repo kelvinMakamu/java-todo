@@ -10,11 +10,13 @@ public class Task {
     private boolean completed;
     private LocalDateTime createdAt;
     private int id;
+    private int categoryId;
 
-    public Task(String description){
+    public Task(String description,int categoryId){
         this.description = description;
-        this.completed = false;
-        this.createdAt = LocalDateTime.now();
+        this.completed   = false;
+        this.createdAt   = LocalDateTime.now();
+        this.categoryId  = categoryId;
     }
 
     public String getDescription() {
@@ -53,16 +55,24 @@ public class Task {
         this.id = id;
     }
 
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Task)) return false;
         Task task = (Task) o;
-        return getCompleted() == task.getCompleted() && getId() == task.getId() && Objects.equals(getDescription(), task.getDescription()) && Objects.equals(getCreatedAt(), task.getCreatedAt());
+        return getCompleted() == task.getCompleted() && getId() == task.getId() && getCategoryId() == task.getCategoryId() && Objects.equals(getDescription(), task.getDescription()) && Objects.equals(getCreatedAt(), task.getCreatedAt());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getDescription(), getCompleted(), getCreatedAt(), getId());
+        return Objects.hash(getDescription(), getCompleted(), getCreatedAt(), getId(), getCategoryId());
     }
 }

@@ -29,7 +29,7 @@ public class TaskDaoTest {
 
     @Test
     public void addingTasksId() throws Exception {
-        Task task = new Task("mow the lawn");
+        Task task = new Task("mow the lawn",1);
         int originalTaskId = task.getId();
         taskDao.add(task);
         assertNotEquals(originalTaskId, task.getId());
@@ -37,11 +37,12 @@ public class TaskDaoTest {
 
     @Test
     public void existingTasksCanBeFoundById() throws Exception {
-        Task task = new Task ("mow the lawn");
+        Task task = new Task ("mow the lawn",1);
         taskDao.add(task); //add to dao (takes care of saving)
         Task foundTask = taskDao.findById(task.getId()); //retrieve
         assertEquals(task, foundTask); //should be the same
     }
+
 
 
 }

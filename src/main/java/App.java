@@ -53,7 +53,7 @@ public class App {
         post("/tasks", (req, res) -> { //URL to make new task on POST route
             Map<String, Object> model = new HashMap<>();
             String description = req.queryParams("description");
-            Task newTask = new Task(description);
+            Task newTask = new Task(description,1);
             res.redirect("/");
             return null;
         }, new HandlebarsTemplateEngine());
