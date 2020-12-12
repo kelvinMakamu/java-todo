@@ -50,6 +50,11 @@ public class CategoryServiceTest {
         assertEquals(1,categoryService.getAll().size());
     }
 
+    @Test
+    public void getAll_ReturnZeroForEmptyCategoryList(){
+        assertEquals(0, categoryService.getAll().size());
+    }
+
     // HELPER
     private Category setUpNewCategory() {
         return new Category("Budget");
