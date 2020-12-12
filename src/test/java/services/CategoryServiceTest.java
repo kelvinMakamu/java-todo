@@ -55,6 +55,17 @@ public class CategoryServiceTest {
         assertEquals(0, categoryService.getAll().size());
     }
 
+    @Test
+    public void update_ChangesCategoryName(){
+        Category category  = setUpNewCategory();
+        String initialName = category.getName();
+        categoryService.add(category);
+        categoryService.update(category.getId(), "Education");
+        Category updatedCategory = categoryService.findById(category.getId());
+        String updatedName = updatedCategory.getName();
+        assertNotEquals(initialName, updatedName);
+    }
+
     // HELPER
     private Category setUpNewCategory() {
         return new Category("Budget");
