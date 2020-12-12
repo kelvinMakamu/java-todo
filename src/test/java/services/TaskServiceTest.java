@@ -50,6 +50,10 @@ public class TaskServiceTest {
         assertEquals(1,taskService.getAll().size());
     }
 
+    @Test
+    public void getAll_ReturnNoTaskOnEmptyList(){
+        assertEquals(0,taskService.getAll().size());
+    }
     //HELPERS
     public Task setUpNewTask(){
         return new Task("My First Task",1);
