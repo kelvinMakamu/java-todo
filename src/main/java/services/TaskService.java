@@ -66,7 +66,7 @@ public class TaskService implements TaskDao {
 
     @Override
     public void deleteById(int id) {
-        String query = "DELETE FROM tasks WHERE id:id";
+        String query = "DELETE FROM tasks WHERE id=:id";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .addParameter("id",id)

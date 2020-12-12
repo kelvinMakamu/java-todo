@@ -65,6 +65,14 @@ public class TaskServiceTest {
         assertNotEquals(initialDescription, updatedTask.getDescription());
     }
 
+    @Test
+    public void deleteById_DeletesSpecificTaskById(){
+        Task task = setUpNewTask();
+        taskService.add(task);
+        taskService.deleteById(task.getId());
+        assertEquals(0,taskService.getAll().size());
+    }
+    
     //HELPERS
     public Task setUpNewTask(){
         return new Task("My First Task",1);
