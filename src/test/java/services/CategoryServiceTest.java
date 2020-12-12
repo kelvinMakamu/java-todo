@@ -1,6 +1,7 @@
 package services;
 
 import models.Category;
+import models.Task;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
 public class CategoryServiceTest {
 
     private CategoryService categoryService;
+    private TaskService taskService;
     private Connection connection;
     private final String DB_URL = "jdbc:h2:mem:testing;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
 
@@ -19,6 +21,7 @@ public class CategoryServiceTest {
     public void setUp() throws Exception {
         Sql2o sql2o = new Sql2o(this.DB_URL,"","");
         categoryService = new CategoryService(sql2o);
+        taskService     = new TaskService(sql2o);
         connection = sql2o.open();
     }
 
@@ -82,6 +85,22 @@ public class CategoryServiceTest {
         categoryService.add(otherCategory);
         categoryService.clearAllCategories();
         assertEquals(0,categoryService.getAll().size());
+    }
+
+    @Test
+    public void getAllTasksByCategory_ReturnOnlyTasksWithinGivenCategory() {
+        Category category = setUpNewCategory();
+        categoryService.add(category);
+        int categoryId = category.getId();
+        Task firstTask = new Task("First Task",categoryId);
+        taskService.add(firstTask);
+        Task secondTask = new Task("Second Task",categoryId);
+        taskService.add(secondTask);
+        Task thirdTask = new Task("Third Task",categoryId);
+        assertEquals(2,categoryService.getAllTasksByCategory(categoryId).size());
+        assertTrue(categoryService.getAllTasksByCategory(categoryId).contains(firstTask));
+        assertTrue(categoryService.getAllTasksByCategory(categoryId).contains(secondTask));
+        assertFalse(categoryService.getAllTasksByCategory(categoryId).contains(thirdTask));
     }
 
     // HELPER
