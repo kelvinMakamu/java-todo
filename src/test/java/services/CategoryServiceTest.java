@@ -35,6 +35,21 @@ public class CategoryServiceTest {
         assertNotEquals(initialCategoryId,category.getId());
     }
 
+    @Test
+    public void findById_successfullySaveCategory(){
+        Category category = setUpNewCategory();
+        categoryService.add(category);
+        Category foundCategory = categoryService.findById(category.getId());
+        assertEquals(category,foundCategory);
+    }
+
+    @Test
+    public void getAll_ReturnTotalCountOfAddedCategories(){
+        Category category = setUpNewCategory();
+        categoryService.add(category);
+        assertEquals(1,categoryService.getAll().size());
+    }
+
     // HELPER
     private Category setUpNewCategory() {
         return new Category("Budget");
