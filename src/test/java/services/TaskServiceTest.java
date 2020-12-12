@@ -84,6 +84,15 @@ public class TaskServiceTest {
         assertEquals(0,taskService.getAll().size());
     }
 
+    @Test
+    public void findById_categoryIdReturnedCorrectly(){
+        Task task = setUpNewTask();
+        int categoryId = task.getCategoryId();
+        taskService.add(task);
+        int newCategoryId = taskService.findById(task.getId()).getCategoryId();
+        assertEquals(categoryId, newCategoryId);
+    }
+
     //HELPERS
     public Task setUpNewTask(){
         return new Task("My First Task",1);
