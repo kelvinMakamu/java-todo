@@ -66,6 +66,14 @@ public class CategoryServiceTest {
         assertNotEquals(initialName, updatedName);
     }
 
+    @Test
+    public void deleteById_DeleteSpecificCategoryByItsId(){
+        Category category = setUpNewCategory();
+        categoryService.add(category);
+        categoryService.deleteById(category.getId());
+        assertEquals(0,categoryService.getAll().size());
+    }
+
     // HELPER
     private Category setUpNewCategory() {
         return new Category("Budget");

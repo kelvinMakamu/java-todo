@@ -63,8 +63,8 @@ public class CategoryService implements CategoryDao {
     }
 
     @Override
-    public void deletedById(int id) {
-        String query = "DELETE FROM tasks WHERE id=:id";
+    public void deleteById(int id) {
+        String query = "DELETE FROM categories WHERE id=:id";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .addParameter("id",id)
@@ -76,7 +76,7 @@ public class CategoryService implements CategoryDao {
 
     @Override
     public void clearAllCategories() {
-        String query = "DELETE FROM tasks";
+        String query = "DELETE FROM categories";
         try(Connection connection = sql2o.open()){
             connection.createQuery(query)
                     .executeUpdate();
