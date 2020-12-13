@@ -50,7 +50,6 @@ public class App {
 
         // POST: NEW CATEGORY
         post("/categories", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
             String name = req.queryParams("name");
             Category newCategory = new Category(name);
             categoryService.add(newCategory);
@@ -60,9 +59,6 @@ public class App {
 
         // POST: NEW TASK
         post("/tasks", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
-            List<Category> allCategories = categoryService.getAll();
-            model.put("categories", allCategories);
             String description = req.queryParams("description");
             int categoryId = Integer.parseInt(req.queryParams("categoryId"));
             Task newTask = new Task(description, categoryId );
@@ -83,7 +79,6 @@ public class App {
 
         // POST: UPDATE CATEGORY
         post("/categories/:id", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
             int idOfCategoryToEdit = Integer.parseInt(req.params("id"));
             String newName = req.queryParams("newCategoryName");
             categoryService.update(idOfCategoryToEdit, newName);
@@ -116,7 +111,6 @@ public class App {
 
         // POST: UPDATE TASK
         post("/tasks/:id", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
             int taskToEditId = Integer.parseInt(req.params("id"));
             String newContent = req.queryParams("description");
             int newCategoryId = Integer.parseInt(req.queryParams("categoryId"));
@@ -127,7 +121,6 @@ public class App {
 
         // GET: DELETE ALL CATEGORIES & TASKS
         get("/categories/delete", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
             categoryService.clearAllCategories();
             taskService.clearAllTasks();
             res.redirect("/");
@@ -136,7 +129,6 @@ public class App {
 
         // GET: DELETE ALL TASKS
         get("/tasks/delete", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
             taskService.clearAllTasks();
             res.redirect("/");
             return null;
