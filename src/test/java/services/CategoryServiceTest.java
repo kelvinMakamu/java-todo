@@ -15,11 +15,11 @@ public class CategoryServiceTest {
     private CategoryService categoryService;
     private TaskService taskService;
     private Connection connection;
-    private final String DB_URL = "jdbc:h2:mem:testing;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
+    private final String DB_URL = "jdbc:postgresql://localhost:5432/todolist_test";
 
     @Before
     public void setUp() throws Exception {
-        Sql2o sql2o = new Sql2o(this.DB_URL,"","");
+        Sql2o sql2o = new Sql2o(this.DB_URL,null,null);
         categoryService = new CategoryService(sql2o);
         taskService     = new TaskService(sql2o);
         connection = sql2o.open();
@@ -27,6 +27,7 @@ public class CategoryServiceTest {
 
     @After
     public void tearDown() throws Exception {
+        categoryService.clearAllCategories();
         connection.close();
     }
 
