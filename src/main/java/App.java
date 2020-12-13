@@ -18,7 +18,7 @@ public class App {
         staticFileLocation("/public");
 
         String DB_URL = "jdbc:postgresql://localhost:5432/todolist";
-//        String DB_URL = "jdbc:h2:~/todolist.db;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
+//      String DB_URL = "jdbc:h2:~/todolist.db;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
         Sql2o sql2o   = new Sql2o(DB_URL, null, null);
         CategoryService categoryService = new CategoryService(sql2o);
         TaskService taskService         = new TaskService(sql2o);
