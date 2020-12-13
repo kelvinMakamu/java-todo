@@ -67,6 +67,17 @@ public class App {
             return null;
         }, new HandlebarsTemplateEngine());
 
+        // GET: TASKS BY CATEGORY ID
+        get("/categories/:id",(req,res)->{
+            Map<String, Object> model = new HashMap<>();
+            int categoryId = Integer.parseInt(req.params("id"));
+            Category category = categoryService.findById(categoryId);
+            List<Task> tasks  = categoryService.getAllTasksByCategory(categoryId);
+            model.put("category",category);
+            model.put("tasks",tasks);
+            return new ModelAndView(model,"category-detail.hbs");
+        }, new HandlebarsTemplateEngine());
+
         // GET: UPDATE CATEGORY FORM
         get("/categories/:id/edit", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
