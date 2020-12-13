@@ -98,7 +98,7 @@ public class App {
             return null;
         }, new HandlebarsTemplateEngine());
 
-        //get: show an individual task that is nested in a category
+        // GET: show an individual task that is nested in a category
         get("/categories/:category_id/tasks/:task_id", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             int idOfTaskToFind = Integer.parseInt(req.params("task_id"));
