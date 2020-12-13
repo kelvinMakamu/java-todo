@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,13 +12,17 @@ import spark.template.handlebars.HandlebarsTemplateEngine;
 import static spark.Spark.*;
 
 public class App {
-    public static void main(String[] args) { //type “psvm + tab” to autocreate this
+
+    public static void main(String[] args) {
+
         staticFileLocation("/public");
+
         String DB_URL = "jdbc:h2:~/todolist.db;INIT=RUNSCRIPT from 'classpath:db/create.sql'";
         Sql2o sql2o   = new Sql2o(DB_URL, "", "");
         CategoryService categoryService = new CategoryService(sql2o);
         TaskService taskService         = new TaskService(sql2o);
-        //HOME PAGE
+
+        // HOME PAGE
         get("/",(req,res) -> {
             Map<String,Object> model  = new HashMap<>();
             List<Category> categories = categoryService.getAll();
@@ -28,6 +31,7 @@ public class App {
             model.put("tasks",tasks);
             return new ModelAndView(model,"index.hbs");
         }, new HandlebarsTemplateEngine());
+
         // NEW TASK FORM
         get("/tasks/new", (req,res)->{
             Map<String,Object> model = new HashMap<>();
@@ -36,77 +40,107 @@ public class App {
             return new ModelAndView(model,"task-form.hbs");
         }, new HandlebarsTemplateEngine());
 
+        // NEW CATEGORY FORM
+        get("/categories/new", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            List<Category> categories = categoryService.getAll();
+            model.put("categories", categories);
+            return new ModelAndView(model, "category-form.hbs");
+        }, new HandlebarsTemplateEngine());
 
-//
-//        //get: delete all tasks
-//        get("/tasks/delete", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            taskDao.clearAllTasks();
-//            res.redirect("/");
-//            return null;
-//        }, new HandlebarsTemplateEngine());
-//
-//        //get: delete an individual task
-//        get("/tasks/:id/delete", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            int idOfTaskToDelete = Integer.parseInt(req.params("id")); //pull id - must match route segment
-//            Task deleteTask = taskDao.findById(idOfTaskToDelete); //use it to find task
-//            taskDao.deleteById(idOfTaskToDelete);
-//            res.redirect("/");
-//            return null;
-//        }, new HandlebarsTemplateEngine());
-//
-//        //get: show all tasks
-//        get("/", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            List<Task> tasks = taskDao.getAll();
-//            model.put("tasks", tasks);
-//            return new ModelAndView(model, "index.hbs");
-//        }, new HandlebarsTemplateEngine());
-//
-//        //get: show new task form
-//        get("/tasks/new", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            return new ModelAndView(model, "task-form.hbs");
-//        }, new HandlebarsTemplateEngine());
-//
-//        //task: process new task form
-//        post("/tasks", (req, res) -> { //URL to make new task on POST route
-//            Map<String, Object> model = new HashMap<>();
-//            String description = req.queryParams("description");
-//            Task newTask = new Task(description,1);
-//            res.redirect("/");
-//            return null;
-//        }, new HandlebarsTemplateEngine());
-//
-//        //get: show an individual task
-//        get("/tasks/:id", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            int idOfTaskToFind = Integer.parseInt(req.params("id")); //pull id - must match route segment
-//            Task foundTask = taskDao.findById(idOfTaskToFind); //use it to find task
-//            model.put("task", foundTask); //add it to model for template to display
-//            return new ModelAndView(model, "task-detail.hbs"); //individual task page.
-//        }, new HandlebarsTemplateEngine());
-//
-//        //get: show a form to update a task
-//        get("/tasks/:id/update", (req, res) -> {
-//            Map<String, Object> model = new HashMap<>();
-//            int idOfTaskToEdit = Integer.parseInt(req.params("id"));
-//            Task editTask = taskDao.findById(idOfTaskToEdit);
-//            model.put("editTask", editTask);
-//            return new ModelAndView(model, "task-form.hbs");
-//        }, new HandlebarsTemplateEngine());
-//
-//        //task: process a form to update a task
-//        post("/tasks/:id", (req, res) -> { //URL to update task on POST route
-//            Map<String, Object> model = new HashMap<>();
-//            String newContent = req.queryParams("description");
-//            int idOfTaskToEdit = Integer.parseInt(req.params("id"));
-//            Task editTask = taskDao.findById(idOfTaskToEdit);
-//            editTask.update(newContent);
-//            res.redirect("/");
-//            return null;
-//        }, new HandlebarsTemplateEngine());
+        // POST: NEW CATEGORY
+        post("/categories", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            String name = req.queryParams("name");
+            Category newCategory = new Category(name);
+            categoryService.add(newCategory);
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
+
+        // POST: NEW TASK
+        post("/tasks", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            List<Category> allCategories = categoryService.getAll();
+            model.put("categories", allCategories);
+            String description = req.queryParams("description");
+            int categoryId = Integer.parseInt(req.queryParams("categoryId"));
+            Task newTask = new Task(description, categoryId );
+            taskService.add(newTask);
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
+
+        // GET: UPDATE CATEGORY FORM
+        get("/categories/:id/edit", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("editCategory", true);
+            Category category = categoryService.findById(Integer.parseInt(req.params("id")));
+            model.put("category", category);
+            model.put("categories", categoryService.getAll());
+            return new ModelAndView(model, "category-form.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        // POST: UPDATE CATEGORY
+        post("/categories/:id", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            int idOfCategoryToEdit = Integer.parseInt(req.params("id"));
+            String newName = req.queryParams("newCategoryName");
+            categoryService.update(idOfCategoryToEdit, newName);
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
+
+        //get: show an individual task that is nested in a category
+        get("/categories/:category_id/tasks/:task_id", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            int idOfTaskToFind = Integer.parseInt(req.params("task_id"));
+            Task foundTask = taskService.findById(idOfTaskToFind);
+            model.put("task", foundTask);
+            int categoryId = Integer.parseInt(req.params("category_id"));
+            Category foundCategory = categoryService.findById(categoryId);
+            model.put("category", foundCategory);
+            return new ModelAndView(model, "task-detail.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        // GET: UPDATE TASK FORM
+        get("/tasks/:id/edit", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            List<Category> allCategories = categoryService.getAll();
+            model.put("categories", allCategories);
+            Task task = taskService.findById(Integer.parseInt(req.params("id")));
+            model.put("task", task);
+            model.put("editTask", true);
+            return new ModelAndView(model, "task-form.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        // POST: UPDATE TASK
+        post("/tasks/:id", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            int taskToEditId = Integer.parseInt(req.params("id"));
+            String newContent = req.queryParams("description");
+            int newCategoryId = Integer.parseInt(req.queryParams("categoryId"));
+            taskService.update(taskToEditId, newCategoryId, newContent);
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
+
+        // GET: DELETE ALL CATEGORIES & TASKS
+        get("/categories/delete", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            categoryService.clearAllCategories();
+            taskService.clearAllTasks();
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
+
+        // GET: DELETE ALL TASKS
+        get("/tasks/delete", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            taskService.clearAllTasks();
+            res.redirect("/");
+            return null;
+        }, new HandlebarsTemplateEngine());
 
     }
 }
